@@ -22,16 +22,14 @@ Any stable version of these softwares are also allowed.
 **stat_count.pl** - calculate the number of all isolates involving in the MCU-based combination, which is used to check whether the process has errors.    
 **output_mcu.pl** - output all MCUs of the phylogenetic tree of each circulation.  
 **check_error.pl** - check whether any circulation has redundant sequences, i.e., the circulation has error.  
-**cal_parameter.pl** - calculate the measures in the MCU-based combination, which will call the cal_similarity_mp.pl, cal_delta_entropy.pl and cal_specific_site.pl scripts.  
+**cal_parameter.pl** - calculate the measures in the MCU-based combination, which will call the sub-scripts of **cal_similarity_mp.pl**, **cal_delta_entropy.pl** and **cal_specific_site.pl**. The three sub-scripts calculate the average intra-MCU sequence similarity, the entropy change after combining MCUs and the number of same unit-specific genomic loci between MCUs.    
 **cal_parameter_init.pl** - calculate the measures of the initialization in the MCU-based combination.    
-**cal_similarity_mp.pl** - calculate the average intra-MCU sequence similarity.  
-**cal_delta_entropy.pl** - calculate the entropy change after combining MCUs.  
-**cal_specific_site.pl** - calculate the number of same unit-specific genomic loci between MCUs.  
 **combine_seqs.pl** - combine the sequences based on the calculated measures in each circulation.  
+**cal_inter_ss.pl** - calculate the sequence similarities between pairwise clusters from the MCU-based combination.  
+**pipeline.pl** - the pipeline script of the MCU-based combination.  
 **output_tree_info.R** - parse the phylogenetic tree and output the information formationally.  
 **obtain_offspring.R** - output the offsprint of all inner nodes of the phylogenetic tree.  
 **obtain_child.R** - output the child nodes of all inner nodes of the phylogenetic tree.  
-**pipeline.pl** - the pipeline script of the MCU-based combination.  
 
 ### Pipeline of the epidemiological combination  
 `perl epi_cluster.pl $query_fasta $meta_file $thre`  
@@ -45,7 +43,23 @@ $query_fasta represents all genomic sequences to be grouped, $meta_file shows th
   
 The inputs are the results in the epidemiological combination step. The specific calculation can use corresponding script based on the description of scripts.  
 
-a
+### Pipeline of the distance-based combination  
+#### Calculate the inter-MCUs sequence similarities  
+`perl cal_inter_ss.pl $MCU_clu_fasta $cluster_info $thread > $output`  
+
+$MCU_clu_fasta represents the respresentative genomic sequences from the MCU-based combination and $cluster_info is the isolates ID in all clusters. $thread is the number of cores of your computer expected to be used.  
+
+#### Optimal number of clusters assessment  
+The converged MCUs are then clustered based on their genetic distance, and the optimal number of clusters is estimated using the Bayesian Information Criterion (BIC) via the R package mclust.  
+  
+``  
+
+#### Hierarchical clustering of the converged MCUs  
+The process was performed by hierarchical clustering in R. The other cluster algorithms can also be employed.  
+
+``
+
+
 
 
 
