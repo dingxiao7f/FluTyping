@@ -8,7 +8,7 @@ This web provides the pipeline scripts of the clustering step in FluTyping invol
 
 ## Requirement  
 Perl 5 and the module of "Math::Complex"  
-R 4.3.0 and the R packages of "ape", "ggtree" and "tidytree"      
+R 4.3.0 and the R packages of "ape", "ggtree", "tidytree" and "mclust"      
 mafft v7.505  
 FastTreeMP v2.1.10   
   
@@ -25,11 +25,15 @@ Any stable version of these softwares are also allowed.
 **cal_parameter.pl** - calculate the measures in the MCU-based combination, which will call the sub-scripts of **cal_similarity_mp.pl**, **cal_delta_entropy.pl** and **cal_specific_site.pl**. The three sub-scripts calculate the average intra-MCU sequence similarity, the entropy change after combining MCUs and the number of same unit-specific genomic loci between MCUs.    
 **cal_parameter_init.pl** - calculate the measures of the initialization in the MCU-based combination.    
 **combine_seqs.pl** - combine the sequences based on the calculated measures in each circulation.  
-**cal_inter_ss.pl** - calculate the sequence similarities between pairwise clusters from the MCU-based combination.  
 **pipeline.pl** - the pipeline script of the MCU-based combination.  
 **output_tree_info.R** - parse the phylogenetic tree and output the information formationally.  
 **obtain_offspring.R** - output the offsprint of all inner nodes of the phylogenetic tree.  
 **obtain_child.R** - output the child nodes of all inner nodes of the phylogenetic tree.  
+**cal_inter_ss.pl** - calculate the sequence similarities between pairwise clusters from the MCU-based combination.  
+**obtain_matrix.pl** - output the pairwise sequence similarities of MCUs in a matrix.  
+**mclust.R** - evaluate the optimal number of clustering MCUs.  
+**h_cluster.R** - hierarchical clustering of MCUs in R.  
+  
 
 ### Pipeline of the epidemiological combination  
 `perl epi_cluster.pl $query_fasta $meta_file $thre`  
@@ -51,13 +55,21 @@ $MCU_clu_fasta represents the respresentative genomic sequences from the MCU-bas
 
 #### Optimal number of clusters assessment  
 The converged MCUs are then clustered based on their genetic distance, and the optimal number of clusters is estimated using the Bayesian Information Criterion (BIC) via the R package mclust.  
+    
+`perl obtain_matrix.pl $pair_ss > $matrix_ss`  
+`Rscript mclust.R $matrix_ss $num_clu $output`  
   
-``  
+$pair_ss is the pairwise sequence similarities of MCUs from the previous step. $num_clu is the number of the MCUs and the $output shows the Graphical quantification of the assessment. The optimal number of clusters will print in the terminal.  
+  
 
 #### Hierarchical clustering of the converged MCUs  
 The process was performed by hierarchical clustering in R. The other cluster algorithms can also be employed.  
 
-``
+`Rscript h_cluster.R $matrix_ss $opt_num_clu $output`  
+
+$matrix_ss is the matrix of pairwise sequence similarites of all MCUs. $opt_num_clu is the optimal number of clusters evaluated from mclust and the resulted clusters of all MCUs will be output in $output file.  
+
+
 
 
 
