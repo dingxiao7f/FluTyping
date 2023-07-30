@@ -38,39 +38,53 @@ Any stable version of these software tools is also acceptable.
   
 
 ### Pipeline of the epidemiological combination  
-1. Run the script epi_cluster.pl as follows:  
-`perl epi_cluster.pl $query_fasta $meta_file $thre`
-Where $query_fasta represents all genomic sequences to be grouped, $meta_file shows the GISAID ID, collection country, and collection year of all isolates, and $thre is the cutoff value of sequence similarity used in CD-HIT. The input formats are detailed in the example files.   
+#### Run the script epi_cluster.pl as follows:
+     
+`perl epi_cluster.pl $query_fasta $meta_file $thre`  
+  
+Where $query_fasta represents all genomic sequences to be grouped, $meta_file shows the GISAID ID, collection country, and collection year of all isolates, and $thre is the cutoff value of sequence similarity used in CD-HIT. The input formats are detailed in the example files.
+     
 
-2. Align the sequences using MAFFT:    
+#### Align the sequences using MAFFT:
+        
 `mafft --auto --thread -1 --quiet $nr_query_fasta  > $aligned_nr_query_fasta`  
 `mafft --auto --thread -1 --quiet $query_fasta  > $aligned_query_fasta`  
   
+  
 ### Quick start of the MCU-based combination  
-Run the pipeline script as follows:  
+#### Run the pipeline script as follows:  
+  
 `perl pipeline.pl $aligned_query_fasta $aligned_nr_query_fasta $meta_file`  
   
 The inputs are the results from the epidemiological combination step. Specific calculations can be performed using corresponding scripts based on the script descriptions.  
 
 ### Pipeline of the distance-based combination  
-1. Calculate the inter-MCUs sequence similarities using cal_inter_ss.pl:   
-`perl cal_inter_ss.pl $MCU_clu_fasta $cluster_info $thread > $output`    
+#### Calculate the inter-MCUs sequence similarities using cal_inter_ss.pl:  
+  
+`perl cal_inter_ss.pl $MCU_clu_fasta $cluster_info $thread > $output`  
+  
 Here, $MCU_clu_fasta represents the representative genomic sequences from the MCU-based combination, $cluster_info contains the isolate IDs in all clusters, and $thread is the number of cores on your computer expected to be used.
-
-2. Assess the optimal number of clusters using the Bayesian Information Criterion (BIC) via the R package mclust:    
+  
+#### Assess the optimal number of clusters using the Bayesian Information Criterion (BIC) via the R package mclust:    
+  
 `perl obtain_matrix.pl $pair_ss > $matrix_ss`  
 `Rscript mclust.R $matrix_ss $num_clu $output`
+  
 The inputs $pair_ss are the pairwise sequence similarities of MCUs from the previous step, $num_clu is the number of the MCUs, and the $output shows the graphical quantification of the assessment. The optimal number of clusters will be printed in the terminal.
-
-3. Perform hierarchical clustering of the converged MCUs in R:  
+  
+#### Perform hierarchical clustering of the converged MCUs in R:  
+  
 `Rscript h_cluster.R $matrix_ss $opt_num_clu $output`
+  
 Here, $matrix_ss is the matrix of pairwise sequence similarities of all MCUs, $opt_num_clu is the optimal number of clusters evaluated from mclust, and the resulted clusters of all MCUs will be output in the $output file.  
+    
+## Example  
+The example files contain the input genomic sequences in fasta format (example.fasta) and the corresponding epidemiological informaition of all isolates (example.meta).  
 
+## Reference  
 
-
-
-
-
+## Author
+Xiao Ding, dx@ism.cams.cn
 
 
 
